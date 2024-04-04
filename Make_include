@@ -1,0 +1,102 @@
+# Makefile for general rules
+
+# To Change the compile environment to your current system you should set:
+#   -1- ROOT variable to the directory where you found this file
+#   -2- if needed use a different compiler (CC) if gcc is not available
+#   -3- on Solaris system use RANLIB=ranlib which is defined below
+
+# the current directory (in vi ":r!pwd")
+ROOT=/home/hunziker/final_emmod
+
+# Some convenient abbreviations
+
+B = $(ROOT)/bin
+
+########################################################################
+########################################################################
+# C compiler; change this only if you are using a different C-compiler
+
+#GNU 
+CC = gcc
+FC = gfortran
+# Linux gcc version 4.x
+OPTC = -O3 -ffast-math
+OPTF = -O3 -ffast-math
+LIBS = -lgfortran 
+OPTC += -DDOUBLE
+OPTF += -fdefault-real-8 -fdefault-double-8
+
+#Cray
+#CC=cc
+#FC=ftn
+#OPTC = -O3 -h fp3 -h list=a
+#OPTF = -O3 -h fp3 -ra
+###for double precision 
+#OPTC += -DDOUBLE
+#OPTF += -s real64
+#LIBS =  
+
+#Intel 
+#CC = icc
+#FC = ifort
+# Linux
+#OPTC = -O3 -no-prec-div
+#OPTF = -O3 -no-prec-div 
+###for double precision 
+#OPTC += -DDOUBLE
+#OPTF += -r8
+#LIBS = -lifcore
+
+#AMD Open64
+#CC = opencc
+#FC = openf95
+#OPTC = -Ofast -DDOUBLE
+#OPTF = -Ofast -d8 -DDOUBLE
+#LDFLAGS = -static -d8
+
+#############################################################################
+# standard CFLAGS
+CFLAGS = -I.
+
+#############################################################################
+# standard FFLAGS empty for GNU compilers
+FFLAGS = 
+
+#############################################################################
+# the archiver
+AR = ar
+
+#############################################################################
+# ar FLAGS
+ARFLAGS = rv
+
+#############################################################################
+# ranlib definition
+RANLIB = ar -s
+
+
+.SUFFIXES : .o .c .cc .f .a .F90
+.c.o	:
+	$(CC) -c $(CFLAGS) $(OPTC) $<
+.c.a	:
+	$(CC) -c $(CFLAGS) $(OPTC) $<
+	$(AR) $(ARFLAGS) $@ $*.o
+	rm -f $*.o
+.o.a	:
+	$(AR) $(ARFLAGS) $@ $*.o
+	rm -f $*.o
+.f.o	:
+	$(FC) -c $(FFLAGS) $(OPTF) $<
+.F90.o	:
+	$(FC) -c $(FFLAGS) $(OPTF) $<
+.f.a	:
+	$(FC) -c $(FFLAGS) -I$I $<
+	$(AR) $(ARFLAGS) $@ $*.o
+	rm -f $*.o
+.cc.a	:
+	$(C++) -c $(C++FLAGS) -I$I $<
+	$(AR) $(ARFLAGS) $@ $*.o
+	rm -f $*.o
+.cc.o	:
+	$(C++) -c $(C++FLAGS) $<
+
